@@ -1,0 +1,8 @@
+# Binaries
+blackjack
+*.o
+*.out
+
+# Build artifacts
+build/
+dist/
