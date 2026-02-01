@@ -22,7 +22,11 @@ void end_tui() {
 }
 
 static void render_hand(int start_y, int start_x, const CardCollection *hand, int score, const char *title, bool hide_first_card) {
-    mvprintw(start_y, start_x, "%s's Hand (Score: %d)", title, score);
+    if (hide_first_card) {
+        mvprintw(start_y, start_x, "%s's Hand (Score: ?)", title);
+    } else {
+        mvprintw(start_y, start_x, "%s's Hand (Score: %d)", title, score);
+    }
     for (int i = 0; i < hand->count; ++i) {
         if (hide_first_card && i == 0) {
             mvprintw(start_y + 1 + i, start_x, "[?]");
