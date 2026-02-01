@@ -1,65 +1,67 @@
 # TUI Blackjack
 
-C言語 + ncursesで作ったシンプルなターミナル版ブラックジャックです。
+[日本語版](./README.ja.md)
 
-## このプロジェクトは何か
-- ターミナル上でブラックジャックを遊べるTUIゲーム。
-- 単一デッキ（52枚）でプレイし、残りが少なくなると自動で再シャッフル。
-- キーボード操作のみでプレイ可能。
+Simple terminal Blackjack built with C and ncurses.
 
-## 使い方
-### ビルド
+## About this project
+- A TUI game that lets you play Blackjack in the terminal.
+- Uses a single 52-card deck and automatically reshuffles when the deck gets low.
+- Playable with keyboard input only.
+
+## Usage
+### Build
 ```bash
 make
 ```
 
-### 実行
+### Run
 ```bash
 ./blackjack
 ```
 
-### 操作方法
-- ベットフェーズ
+### Controls
+- Betting phase
   - `1` $10 / `2` $50 / `3` $100 / `4` $500
-  - `c` ベットをクリア
-  - `a` オールイン
-  - `b` 配る（ディール開始）
-- プレイ中
-  - `h` ヒット（カードを追加）
-  - `s` スタンド（手番終了）
-  - `d` ダブル（ベット2倍＋1枚引いて終了）
-  - `?` ヘルプ
-  - `q` 終了
-- ラウンド終了後
-  - `p` もう一度
-  - `q` 終了
+  - `c` clear bet
+  - `a` all-in
+  - `b` deal (start the round)
+- During play
+  - `h` hit (draw a card)
+  - `s` stand (end your turn)
+  - `d` double (double bet + draw one card and end)
+  - `?` help
+  - `q` quit
+- After the round
+  - `p` play again
+  - `q` quit
 
-## ルール（このプロジェクト固有）
-### 基本
-- 目標は21を超えずにディーラーより高い合計点にすること。
-- 数字カードはその数字、J/Q/Kは10点、Aは1点または11点。
-- 初期所持金は$1000。
+## Rules (project-specific)
+### Basics
+- The goal is to get a higher total than the dealer without going over 21.
+- Number cards are their value, J/Q/K are worth 10, A is worth 1 or 11.
+- Starting bankroll is $1000.
 
-### ディーラーの挙動
-- 合計17未満でヒット。
-- ソフト17（Aを11点として合計17）の場合もヒット。
-- プレイヤー手番中はディーラーの1枚目を伏せる。
+### Dealer behavior
+- Hits on totals under 17.
+- Also hits on soft 17 (A counted as 11 for a total of 17).
+- Keeps the first card face-down during the player's turn.
 
-### 勝敗と配当
-- ブラックジャック（最初の2枚で21）は3:2払い戻し。
-- 同点はプッシュ（引き分け）。
-- プレイヤーのバーストは即負け。
+### Outcomes and payouts
+- Blackjack (21 with the first two cards) pays 3:2.
+- Ties are a push.
+- Player bust is an immediate loss.
 
-### 採用されている/されていないアクション
-- ダブルダウン: 可能（最初の2枚のみ、所持金が足りる場合）。
-- スプリット: なし。
-- サレンダー: なし。
-- インシュアランス: なし。
+### Available / unavailable actions
+- Double down: available (first two cards only, if you have enough bankroll).
+- Split: not available.
+- Surrender: not available.
+- Insurance: not available.
 
-### デッキ
-- 52枚の単一デッキ。
-- 残り13枚未満になると自動的に新品デッキへ交換してシャッフル。
+### Deck
+- Single 52-card deck.
+- Automatically switches to a fresh deck and shuffles when fewer than 13 cards remain.
 
-## プレイする上で知っておきたいこと
-- ベットは$0では開始できません。
-- 所持金が0になると「Game Over」になり、`r`でリセット、`q`で終了できます。
+## Notes for play
+- You cannot start a round with a $0 bet.
+- If your bankroll reaches $0, you get "Game Over" and can `r` to reset or `q` to quit.
