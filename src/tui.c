@@ -40,18 +40,28 @@ static void render_hand(int start_y, int start_x, const CardCollection *hand, in
     }
 }
 
-void render_game(const CardCollection *player_hand, const CardCollection *dealer_hand, int player_score, int dealer_score, const char *message, bool hide_dealer_card) {
+void render_game(const GameState *state) {
     clear();
 
+    bool hide_dealer_card = (state->phase == PHASE_PLAYER_TURN);
+
     // Render hands
-    render_hand(2, 2, player_hand, player_score, "Player", false);
-    render_hand(2, 30, dealer_hand, dealer_score, "Dealer", hide_dealer_card);
+    render_hand(2, 2, &state->player_hand, state->player_score, "Player", false);
+    render_hand(2, 30, &state->dealer_hand, state->dealer_score, "Dealer", hide_dealer_card);
+
+    // Render money and bet
+    mvprintw(13, 2, "Money: $%d", state->player_money);
+    mvprintw(13, 30, "Bet: $%d", state->current_bet);
 
     // Render message
-    mvprintw(15, 2, "%s", message);
+    mvprintw(15, 2, "%s", state->message);
 
     // Render instructions
-    mvprintw(17, 2, "(h) Hit  (s) Stand  (q) Quit  (?) Help");
+    if (state->phase == PHASE_BETTING) {
+        mvprintw(17, 2, "(b) Bet  (q) Quit");
+    } else {
+        mvprintw(17, 2, "(h) Hit  (s) Stand  (q) Quit  (?) Help");
+    }
 
     refresh();
 }
