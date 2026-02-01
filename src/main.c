@@ -105,7 +105,26 @@ void play_game(GameState *state) {
 
         state->player_score = calculate_score(&state->player_hand);
         state->dealer_score = calculate_score(&state->dealer_hand);
-        strcpy(state->message, "Your turn. (h) Hit, (s) Stand.");
+
+        bool player_blackjack = (state->player_score == 21 && state->player_hand.count == 2);
+        bool dealer_blackjack = (state->dealer_score == 21 && state->dealer_hand.count == 2);
+
+        if (player_blackjack || dealer_blackjack) {
+            if (player_blackjack && dealer_blackjack) {
+                strcpy(state->message, "Both have Blackjack! Push.");
+            } else if (player_blackjack) {
+                int payout = (state->current_bet * 3) / 2;
+                state->player_money += payout;
+                strcpy(state->message, "Blackjack! You win 3:2.");
+            } else {
+                state->player_money -= state->current_bet;
+                strcpy(state->message, "Dealer has Blackjack!");
+            }
+            strcat(state->message, " (p) Play Again, (q) Quit");
+            state->phase = PHASE_ROUND_OVER;
+        } else {
+            strcpy(state->message, "Your turn. (h) Hit, (s) Stand.");
+        }
         
         bool round_over = false;
 
@@ -121,6 +140,21 @@ void play_game(GameState *state) {
                         strcpy(state->message, "You busted! Dealer wins.");
                         state->phase = PHASE_DEALER_TURN;
                     }
+                } else if (ch == 'd') {
+                    if (state->player_hand.count == 2 &&
+                        state->current_bet * 2 <= state->player_money) {
+                        state->current_bet *= 2;
+                        deal_card(&state->deck, &state->player_hand);
+                        state->player_score = calculate_score(&state->player_hand);
+                        if (state->player_score > 21) {
+                            strcpy(state->message, "You busted on double!");
+                        } else {
+                            strcpy(state->message, "Double down! Dealer's turn.");
+                        }
+                        state->phase = PHASE_DEALER_TURN;
+                    } else {
+                        strcpy(state->message, "Double not available.");
+                    }
                 } else if (ch == 's') {
                     strcpy(state->message, "Dealer's turn.");
                     state->phase = PHASE_DEALER_TURN;
@@ -135,7 +169,8 @@ void play_game(GameState *state) {
             if (state->phase == PHASE_DEALER_TURN) {
                 render_game(state);
 
-                while (state->dealer_score < 17) {
+                while (state->dealer_score < 17 ||
+                       (state->dealer_score == 17 && is_soft_17(&state->dealer_hand))) {
                     deal_card(&state->deck, &state->dealer_hand);
                     state->dealer_score = calculate_score(&state->dealer_hand);
                     strcpy(state->message, "Dealer is hitting...");
@@ -191,4 +226,3 @@ int main() {
     end_tui();
     return 0;
 }
-
