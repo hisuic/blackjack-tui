@@ -105,7 +105,26 @@ void play_game(GameState *state) {
 
         state->player_score = calculate_score(&state->player_hand);
         state->dealer_score = calculate_score(&state->dealer_hand);
-        strcpy(state->message, "Your turn. (h) Hit, (s) Stand.");
+
+        bool player_blackjack = (state->player_score == 21 && state->player_hand.count == 2);
+        bool dealer_blackjack = (state->dealer_score == 21 && state->dealer_hand.count == 2);
+
+        if (player_blackjack || dealer_blackjack) {
+            if (player_blackjack && dealer_blackjack) {
+                strcpy(state->message, "Both have Blackjack! Push.");
+            } else if (player_blackjack) {
+                int payout = (state->current_bet * 3) / 2;
+                state->player_money += payout;
+                strcpy(state->message, "Blackjack! You win 3:2.");
+            } else {
+                state->player_money -= state->current_bet;
+                strcpy(state->message, "Dealer has Blackjack!");
+            }
+            strcat(state->message, " (p) Play Again, (q) Quit");
+            state->phase = PHASE_ROUND_OVER;
+        } else {
+            strcpy(state->message, "Your turn. (h) Hit, (s) Stand.");
+        }
         
         bool round_over = false;
 
@@ -191,4 +210,3 @@ int main() {
     end_tui();
     return 0;
 }
-
