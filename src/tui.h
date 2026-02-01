@@ -1,6 +1,7 @@
 #ifndef TUI_H
 #define TUI_H
 
+#include <ncurses.h>
 #include <stdbool.h>
 #include "game.h"
 
