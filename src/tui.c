@@ -2,7 +2,7 @@
 #include <ncurses.h>
 #include <stdbool.h>
 
-static const char *SUITS[] = {"♥", "♦", "♣", "♠"};
+static const char *SUITS[] = {"H", "D", "C", "S"};
 static const char *RANKS[] = {"?", "?", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
 
 void init_tui() {
@@ -58,7 +58,7 @@ void render_game(const GameState *state) {
 
     // Render instructions
     if (state->phase == PHASE_BETTING) {
-        mvprintw(17, 2, "(b) Bet  (q) Quit");
+        mvprintw(17, 2, "1:10 2:50 3:100 4:500 (c)Clear (a)AllIn (b)Deal");
     } else {
         mvprintw(17, 2, "(h) Hit  (s) Stand  (q) Quit  (?) Help");
     }
