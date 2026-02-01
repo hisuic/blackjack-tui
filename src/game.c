@@ -71,3 +71,27 @@ int calculate_score(const CardCollection *hand) {
 
     return score;
 }
+
+bool is_soft_17(const CardCollection *hand) {
+    int score = 0;
+    int ace_count = 0;
+
+    for (int i = 0; i < hand->count; i++) {
+        Rank rank = hand->cards[i].rank;
+        if (rank >= JACK && rank <= KING) {
+            score += 10;
+        } else if (rank == ACE) {
+            ace_count++;
+            score += 11;
+        } else {
+            score += rank;
+        }
+    }
+
+    while (score > 21 && ace_count > 0) {
+        score -= 10;
+        ace_count--;
+    }
+
+    return (score == 17 && ace_count > 0);
+}

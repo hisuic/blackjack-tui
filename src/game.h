@@ -1,6 +1,8 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <stdbool.h>
+
 // Represents a card suit
 typedef enum {
     HEARTS,
@@ -61,5 +63,8 @@ void deal_card(CardCollection *deck, CardCollection *hand);
 
 // Calculates the score of a hand
 int calculate_score(const CardCollection *hand);
+
+// Returns true if the hand is a soft 17 (i.e., 17 with an Ace counted as 11)
+bool is_soft_17(const CardCollection *hand);
 
 #endif // GAME_H

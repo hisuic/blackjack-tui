@@ -154,7 +154,8 @@ void play_game(GameState *state) {
             if (state->phase == PHASE_DEALER_TURN) {
                 render_game(state);
 
-                while (state->dealer_score < 17) {
+                while (state->dealer_score < 17 ||
+                       (state->dealer_score == 17 && is_soft_17(&state->dealer_hand))) {
                     deal_card(&state->deck, &state->dealer_hand);
                     state->dealer_score = calculate_score(&state->dealer_hand);
                     strcpy(state->message, "Dealer is hitting...");
