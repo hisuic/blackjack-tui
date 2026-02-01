@@ -23,6 +23,27 @@ GameState* init_game_state() {
 void play_game(GameState *state) {
     bool running = true;
     while(running) {
+        if (state->player_money <= 0) {
+            strcpy(state->message, "Game Over! You have no money left. (r) Reset, (q) Quit");
+            render_game(state);
+            int ch_end;
+            do {
+                ch_end = get_input();
+            } while (ch_end != 'r' && ch_end != 'q');
+
+            if (ch_end == 'q') {
+                running = false;
+                continue;
+            } else if (ch_end == 'r') {
+                // Reset game state
+                state->player_money = 1000;
+                state->current_bet = 0;
+                free(state->deck.cards);
+                state->deck = create_deck();
+                shuffle_deck(&state->deck);
+            }
+        }
+
         // Reset hands
         state->player_hand.count = 0;
         state->dealer_hand.count = 0;
