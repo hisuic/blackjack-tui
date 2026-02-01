@@ -28,6 +28,25 @@ typedef struct {
     int capacity;
 } CardCollection;
 
+typedef enum {
+    PHASE_BETTING,
+    PHASE_PLAYER_TURN,
+    PHASE_DEALER_TURN,
+    PHASE_ROUND_OVER
+} GamePhase;
+
+typedef struct {
+    CardCollection deck;
+    CardCollection player_hand;
+    CardCollection dealer_hand;
+    int player_score;
+    int dealer_score;
+    int player_money;
+    int current_bet;
+    GamePhase phase;
+    char message[100];
+} GameState;
+
 // Initializes a hand with a default capacity
 CardCollection init_hand();
 
