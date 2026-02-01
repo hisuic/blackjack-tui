@@ -54,11 +54,41 @@ int main() {
             }
         }
         
-        // Simple exit for now after player turn
-        if (!player_turn) {
-            // Dealer logic will go here
-            get_input(); // Wait for keypress before exiting
-            game_over = true;
+        // Dealer's turn
+        if (!player_turn && !game_over) {
+            // Reveal dealer's hand
+            render_game(&player_hand, &dealer_hand, player_score, dealer_score, message, false);
+
+            while (dealer_score < 17) {
+                deal_card(&deck, &dealer_hand);
+                dealer_score = calculate_score(&dealer_hand);
+                render_game(&player_hand, &dealer_hand, player_score, dealer_score, "Dealer is hitting...", false);
+                get_input(); // Pause for effect
+            }
+
+            if (player_score > 21) {
+                // Player already busted
+            } else if (dealer_score > 21) {
+                strcpy(message, "Dealer busts! You win!");
+            } else if (player_score > dealer_score) {
+                strcpy(message, "You win!");
+            } else if (dealer_score > player_score) {
+                strcpy(message, "Dealer wins!");
+            } else {
+                strcpy(message, "It's a push!");
+            }
+            
+            strcat(message, " (p) Play Again, (q) Quit");
+            render_game(&player_hand, &dealer_hand, player_score, dealer_score, message, false);
+            
+            int ch_end = get_input();
+            if (ch_end == 'p') {
+                // Reset for a new game (simplified)
+                // This will be improved later
+                game_over = true; // For now, just exit
+            } else {
+                game_over = true;
+            }
         }
     }
 
