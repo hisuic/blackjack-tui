@@ -3,13 +3,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "tui.h"
-#include "game.h"
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
 #include <unistd.h> // for sleep
+#include <locale.h>
 
 void play_game() {
     CardCollection deck = create_deck();
@@ -111,6 +106,7 @@ void play_game() {
 }
 
 int main() {
+    setlocale(LC_ALL, "");
     init_tui();
     play_game();
     end_tui();
