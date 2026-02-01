@@ -1,6 +1,7 @@
 #include "tui.h"
 #include "game.h"
 #include <stdbool.h>
+#include <stdlib.h>
 
 void cleanup(CardCollection *deck, CardCollection *player_hand, CardCollection *dealer_hand) {
     free(deck->cards);
