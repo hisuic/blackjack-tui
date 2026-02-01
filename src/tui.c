@@ -64,7 +64,7 @@ void render_game(const GameState *state) {
     if (state->phase == PHASE_BETTING) {
         mvprintw(17, 2, "1: $10 | 2: $50 | 3: $100 | 4: $500      (c) Clear | (a) All In | (b) Deal");
     } else {
-        mvprintw(17, 2, "(h) Hit  (s) Stand  (q) Quit  (?) Help");
+        mvprintw(17, 2, "(h) Hit  (s) Stand  (d) Double  (q) Quit  (?) Help");
     }
 
     refresh();
@@ -79,10 +79,11 @@ void render_help() {
     mvprintw(7, 2, "Controls:");
     mvprintw(8, 4, "(h) - Hit: Take another card.");
     mvprintw(9, 4, "(s) - Stand: Hold your total and end your turn.");
-    mvprintw(10, 4, "(q) - Quit: Exit the game.");
-    mvprintw(11, 4, "(?) - Help: Show this help screen.");
+    mvprintw(10, 4, "(d) - Double: Double the bet, take one card, then stand.");
+    mvprintw(11, 4, "(q) - Quit: Exit the game.");
+    mvprintw(12, 4, "(?) - Help: Show this help screen.");
 
-    mvprintw(14, 2, "Press any key to return to the game.");
+    mvprintw(15, 2, "Press any key to return to the game.");
     refresh();
 }
 

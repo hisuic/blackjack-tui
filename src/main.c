@@ -140,6 +140,21 @@ void play_game(GameState *state) {
                         strcpy(state->message, "You busted! Dealer wins.");
                         state->phase = PHASE_DEALER_TURN;
                     }
+                } else if (ch == 'd') {
+                    if (state->player_hand.count == 2 &&
+                        state->current_bet * 2 <= state->player_money) {
+                        state->current_bet *= 2;
+                        deal_card(&state->deck, &state->player_hand);
+                        state->player_score = calculate_score(&state->player_hand);
+                        if (state->player_score > 21) {
+                            strcpy(state->message, "You busted on double!");
+                        } else {
+                            strcpy(state->message, "Double down! Dealer's turn.");
+                        }
+                        state->phase = PHASE_DEALER_TURN;
+                    } else {
+                        strcpy(state->message, "Double not available.");
+                    }
                 } else if (ch == 's') {
                     strcpy(state->message, "Dealer's turn.");
                     state->phase = PHASE_DEALER_TURN;
