@@ -36,29 +36,42 @@ void play_game(GameState *state) {
 
         // Betting phase
         state->phase = PHASE_BETTING;
-        state->current_bet = 10; // Default bet
-        sprintf(state->message, "Use UP/DOWN to change bet. Press 'b' to deal. Bet: $%d", state->current_bet);
+        state->current_bet = 0;
+        strcpy(state->message, "Place your bet.");
 
         while (state->phase == PHASE_BETTING) {
             render_game(state);
             int ch = get_input();
-            if (ch == KEY_UP) {
-                if (state->current_bet < state->player_money) {
-                    state->current_bet += 10;
-                }
-            } else if (ch == KEY_DOWN) {
-                if (state->current_bet > 10) {
-                    state->current_bet -= 10;
-                }
-            } else if (ch == 'b') {
-                if (state->current_bet > 0) {
-                    state->phase = PHASE_PLAYER_TURN;
-                }
-            } else if (ch == 'q') {
-                running = false;
-                state->phase = -1; //dummy phase
+            int bet_amount = 0;
+
+            switch(ch) {
+                case '1': bet_amount = 10; break;
+                case '2': bet_amount = 50; break;
+                case '3': bet_amount = 100; break;
+                case '4': bet_amount = 500; break;
+                case 'c':
+                    state->current_bet = 0;
+                    break;
+                case 'a':
+                    state->current_bet = state->player_money;
+                    break;
+                case 'b':
+                    if (state->current_bet > 0 && state->current_bet <= state->player_money) {
+                        state->phase = PHASE_PLAYER_TURN;
+                    }
+                    break;
+                case 'q':
+                    running = false;
+                    state->phase = -1; //dummy phase
+                    break;
             }
-             sprintf(state->message, "Use UP/DOWN to change bet. Press 'b' to deal. Bet: $%d", state->current_bet);
+
+            if (bet_amount > 0) {
+                if (state->current_bet + bet_amount <= state->player_money) {
+                    state->current_bet += bet_amount;
+                }
+            }
+             sprintf(state->message, "Your bet: $%d", state->current_bet);
         }
         if(!running) break;
 
