@@ -13,6 +13,9 @@ void end_tui();
 // Renders the entire game state
 void render_game(const CardCollection *player_hand, const CardCollection *dealer_hand, int player_score, int dealer_score, const char *message, bool hide_dealer_card);
 
+// Renders the help screen
+void render_help();
+
 // Gets a character from user input
 int get_input();
 

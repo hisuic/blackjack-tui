@@ -51,19 +51,21 @@ void play_game() {
                 if (ch == 'h') {
                     deal_card(&deck, &player_hand);
                     player_score = calculate_score(&player_hand);
-                    if (player_score > 21) {
-                        strcpy(message, "You busted! Dealer wins.");
-                        player_turn = false;
-                    }
-                } else if (ch == 's') {
-                    strcpy(message, "Dealer's turn.");
-                    player_turn = false;
-                } else if (ch == 'q') {
-                    round_over = true;
-                    running = false;
-                }
-            }
-            
+                                    if (player_score > 21) {
+                                        strcpy(message, "You busted! Dealer wins.");
+                                        player_turn = false;
+                                    }
+                                } else if (ch == 's') {
+                                    strcpy(message, "Dealer's turn.");
+                                    player_turn = false;
+                                } else if (ch == 'q') {
+                                    round_over = true;
+                                    running = false;
+                                } else if (ch == '?' || ch == 'H') {
+                                    render_help();
+                                    get_input();
+                                }
+                            }            
             if (!player_turn) {
                 render_game(&player_hand, &dealer_hand, player_score, dealer_score, message, false);
                 sleep(1);

@@ -51,11 +51,26 @@ void render_game(const CardCollection *player_hand, const CardCollection *dealer
     mvprintw(15, 2, "%s", message);
 
     // Render instructions
-    mvprintw(17, 2, "(h) Hit  (s) Stand  (q) Quit");
+    mvprintw(17, 2, "(h) Hit  (s) Stand  (q) Quit  (?) Help");
 
     refresh();
 }
 
+void render_help() {
+    clear();
+    mvprintw(2, 2, "== Blackjack Help ==");
+    mvprintw(4, 2, "The goal of Blackjack is to beat the dealer's hand without going over 21.");
+    mvprintw(5, 2, "Face cards (J, Q, K) are worth 10. Aces are worth 1 or 11.");
+    
+    mvprintw(7, 2, "Controls:");
+    mvprintw(8, 4, "(h) - Hit: Take another card.");
+    mvprintw(9, 4, "(s) - Stand: Hold your total and end your turn.");
+    mvprintw(10, 4, "(q) - Quit: Exit the game.");
+    mvprintw(11, 4, "(?) - Help: Show this help screen.");
+
+    mvprintw(14, 2, "Press any key to return to the game.");
+    refresh();
+}
 
 int get_input() {
     return getch();
