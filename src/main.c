@@ -5,6 +5,7 @@
 #include <string.h>
 #include <unistd.h> // for sleep
 #include <locale.h>
+#include <stdio.h>
 
 GameState* init_game_state() {
     GameState *state = malloc(sizeof(GameState));
@@ -35,7 +36,31 @@ void play_game(GameState *state) {
 
         // Betting phase
         state->phase = PHASE_BETTING;
-        // ... Betting logic will be added here ...
+        state->current_bet = 10; // Default bet
+        sprintf(state->message, "Use UP/DOWN to change bet. Press 'b' to deal. Bet: $%d", state->current_bet);
+
+        while (state->phase == PHASE_BETTING) {
+            render_game(state);
+            int ch = get_input();
+            if (ch == KEY_UP) {
+                if (state->current_bet < state->player_money) {
+                    state->current_bet += 10;
+                }
+            } else if (ch == KEY_DOWN) {
+                if (state->current_bet > 10) {
+                    state->current_bet -= 10;
+                }
+            } else if (ch == 'b') {
+                if (state->current_bet > 0) {
+                    state->phase = PHASE_PLAYER_TURN;
+                }
+            } else if (ch == 'q') {
+                running = false;
+                state->phase = -1; //dummy phase
+            }
+             sprintf(state->message, "Use UP/DOWN to change bet. Press 'b' to deal. Bet: $%d", state->current_bet);
+        }
+        if(!running) break;
 
         // Initial deal
         state->phase = PHASE_PLAYER_TURN;
@@ -85,13 +110,16 @@ void play_game(GameState *state) {
                 }
 
                 if (state->player_score > 21) {
-                    // Player already busted
+                    state->player_money -= state->current_bet;
                 } else if (state->dealer_score > 21) {
                     strcpy(state->message, "Dealer busts! You win!");
+                    state->player_money += state->current_bet;
                 } else if (state->player_score > state->dealer_score) {
                     strcpy(state->message, "You win!");
+                    state->player_money += state->current_bet;
                 } else if (state->dealer_score > state->player_score) {
                     strcpy(state->message, "Dealer wins!");
+                    state->player_money -= state->current_bet;
                 } else {
                     strcpy(state->message, "It's a push!");
                 }
