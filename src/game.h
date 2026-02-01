@@ -28,4 +28,19 @@ typedef struct {
     int capacity;
 } CardCollection;
 
+// Initializes a hand with a default capacity
+CardCollection init_hand();
+
+// Creates a standard 52-card deck
+CardCollection create_deck();
+
+// Shuffles a card collection
+void shuffle_deck(CardCollection *deck);
+
+// Deals a card from the deck to a hand
+void deal_card(CardCollection *deck, CardCollection *hand);
+
+// Calculates the score of a hand
+int calculate_score(const CardCollection *hand);
+
 #endif // GAME_H
