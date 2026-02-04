@@ -150,8 +150,8 @@ static void render_betting_controls(int start_y, int start_x, int width) {
     mvprintw(start_y + 1, start_x + 2, "Bet Amount");
     mvprintw(start_y + 4, start_x + 2, "Actions");
     attroff(COLOR_PAIR(CP_PANEL_HEADING) | A_BOLD);
-    mvprintw(start_y + 2, start_x + 4, "[1] +$10   [2] +$50   [3] +$100   [4] +$500   [c] Clear");
-    mvprintw(start_y + 5, start_x + 4, "[a] All In   [b] Deal   [q] Quit   [?] Help");
+    mvprintw(start_y + 2, start_x + 4, "[1] +$10   [2] +$50   [3] +$100   [4] +$500   [a] All In   [c] Clear");
+    mvprintw(start_y + 5, start_x + 4, "[b] Deal   [q] Quit   [?] Help");
 }
 
 static void render_turn_controls(int start_y, int start_x, int width) {
