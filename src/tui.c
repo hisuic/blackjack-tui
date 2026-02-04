@@ -134,11 +134,12 @@ static void render_turn_controls(int start_y, int start_x, int width) {
 }
 
 static int status_color_for_message(const char *message) {
+    if (strstr(message, "bust") != NULL || strstr(message, "busted") != NULL ||
+        strstr(message, "Dealer wins") != NULL || strstr(message, "Game Over") != NULL) {
+        return 2;
+    }
     if (strstr(message, "win") != NULL || strstr(message, "Blackjack") != NULL || strstr(message, "push") != NULL) {
         return 3;
-    }
-    if (strstr(message, "bust") != NULL || strstr(message, "Dealer wins") != NULL || strstr(message, "Game Over") != NULL) {
-        return 2;
     }
     return 4;
 }
