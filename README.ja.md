@@ -2,6 +2,9 @@
 
 [English](./README.md)
 
+![Image](https://github.com/user-attachments/assets/03ff4e9a-21ea-4e84-99c5-820ce0f89dce)
+
+
 C言語 + ncursesで作ったシンプルなターミナル版ブラックジャックです。
 
 ## このプロジェクトは何か
