@@ -21,31 +21,53 @@ void end_tui() {
     endwin(); // End curses mode
 }
 
-static void render_hand(int start_y, int start_x, const CardCollection *hand, int score, const char *title, bool hide_first_card) {
-    if (hide_first_card) {
-        mvprintw(start_y, start_x, "%s's Hand (Score: ?)", title);
-    } else {
-        mvprintw(start_y, start_x, "%s's Hand (Score: %d)", title, score);
+static void draw_box(int start_y, int start_x, int width, int height) {
+    for (int x = start_x + 1; x < start_x + width - 1; ++x) {
+        mvaddch(start_y, x, ACS_HLINE);
+        mvaddch(start_y + height - 1, x, ACS_HLINE);
     }
-    for (int i = 0; i < hand->count; ++i) {
+
+    for (int y = start_y + 1; y < start_y + height - 1; ++y) {
+        mvaddch(y, start_x, ACS_VLINE);
+        mvaddch(y, start_x + width - 1, ACS_VLINE);
+    }
+
+    mvaddch(start_y, start_x, ACS_ULCORNER);
+    mvaddch(start_y, start_x + width - 1, ACS_URCORNER);
+    mvaddch(start_y + height - 1, start_x, ACS_LLCORNER);
+    mvaddch(start_y + height - 1, start_x + width - 1, ACS_LRCORNER);
+}
+
+static void render_hand_box(int start_y, int start_x, int width, int height, const CardCollection *hand, int score, const char *title, bool hide_first_card) {
+    draw_box(start_y, start_x, width, height);
+
+    if (hide_first_card) {
+        mvprintw(start_y + 1, start_x + 2, "%s (Score: ?)", title);
+    } else {
+        mvprintw(start_y + 1, start_x + 2, "%s (Score: %d)", title, score);
+    }
+
+    int max_card_rows = height - 3; // title + cards + border
+    int cards_to_draw = hand->count;
+    if (cards_to_draw > max_card_rows) {
+        cards_to_draw = max_card_rows;
+    }
+
+    for (int i = 0; i < cards_to_draw; ++i) {
         if (hide_first_card && i == 0) {
-            mvprintw(start_y + 1 + i, start_x, "[?]");
+            mvprintw(start_y + 2 + i, start_x + 2, "[?]");
         } else {
             Card card = hand->cards[i];
             bool is_red = (card.suit == HEARTS || card.suit == DIAMONDS);
             if (is_red) {
                 attron(COLOR_PAIR(2));
             }
-            mvprintw(start_y + 1 + i, start_x, "[%s %s]", RANKS[card.rank], SUITS[card.suit]);
+            mvprintw(start_y + 2 + i, start_x + 2, "[%s %s]", RANKS[card.rank], SUITS[card.suit]);
             if (is_red) {
                 attroff(COLOR_PAIR(2));
             }
         }
     }
-}
-
-static int max_int(int a, int b) {
-    return (a > b) ? a : b;
 }
 
 void render_game(const GameState *state) {
@@ -74,14 +96,14 @@ void render_game(const GameState *state) {
     int hand_y = 2;
     int player_x = start_x;
     int dealer_x = start_x + column_width + column_gap;
-    int hand_height = max_int(state->player_hand.count, state->dealer_hand.count) + 2;
-    int status_y = hand_y + hand_height + 1;
+    int hand_box_height = 13; // top/bottom border + title + 10 card rows
+    int status_y = hand_y + hand_box_height + 1;
     int message_y = status_y + 2;
     int controls_y = message_y + 2;
 
     // Render hands
-    render_hand(hand_y, player_x, &state->player_hand, state->player_score, "Player", false);
-    render_hand(hand_y, dealer_x, &state->dealer_hand, state->dealer_score, "Dealer", hide_dealer_card);
+    render_hand_box(hand_y, player_x, column_width, hand_box_height, &state->player_hand, state->player_score, "Player", false);
+    render_hand_box(hand_y, dealer_x, column_width, hand_box_height, &state->dealer_hand, state->dealer_score, "Dealer", hide_dealer_card);
 
     // Render money and bet
     mvprintw(status_y, player_x, "Money: $%d", state->player_money);
