@@ -119,6 +119,18 @@ static void render_title_art(int cols) {
     }
 }
 
+static void render_betting_controls(int start_y, int start_x, int width) {
+    draw_box(start_y, start_x, width, 5);
+    mvprintw(start_y + 1, start_x + 2, "Bet Amount");
+    mvprintw(start_y + 2, start_x + 2, "[1] +$10   [2] +$50   [3] +$100   [4] +$500   [c] Clear");
+    mvprintw(start_y + 3, start_x + 2, "Actions: [a] All In   [b] Deal   [q] Quit   [?] Help");
+}
+
+static void render_turn_controls(int start_y, int start_x, int width) {
+    draw_box(start_y, start_x, width, 3);
+    mvprintw(start_y + 1, start_x + 2, "[h] Hit   [s] Stand   [d] Double   [q] Quit   [?] Help");
+}
+
 void render_game(const GameState *state) {
     clear();
 
@@ -152,6 +164,8 @@ void render_game(const GameState *state) {
     int status_y = hand_y + hand_box_height + 1;
     int message_y = status_y + 2;
     int controls_y = message_y + 2;
+    int controls_x = start_x;
+    int controls_width = total_width;
 
     // Render hands
     render_hand_box(hand_y, player_x, column_width, hand_box_height, &state->player_hand, state->player_score, "Player", false);
@@ -166,10 +180,9 @@ void render_game(const GameState *state) {
 
     // Render instructions
     if (state->phase == PHASE_BETTING) {
-        mvprintw(controls_y, player_x, "Bet Amount: 1:$10  2:$50  3:$100  4:$500");
-        mvprintw(controls_y + 1, player_x, "Actions: (c) Clear  (a) All In  (b) Deal  (q) Quit  (?) Help");
+        render_betting_controls(controls_y, controls_x, controls_width);
     } else {
-        mvprintw(controls_y, player_x, "(h) Hit  (s) Stand  (d) Double  (q) Quit  (?) Help");
+        render_turn_controls(controls_y, controls_x, controls_width);
     }
 
     refresh();
