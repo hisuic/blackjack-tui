@@ -77,7 +77,9 @@ static void draw_box(int start_y, int start_x, int width, int height) {
 static void render_hand_box(int start_y, int start_x, int width, int height, const CardCollection *hand, int score, const char *title, bool hide_first_card) {
     draw_box(start_y, start_x, width, height);
 
-    if (hide_first_card) {
+    if (hand->count == 0) {
+        mvprintw(start_y + 1, start_x + 2, "%s (Score: -)", title);
+    } else if (hide_first_card) {
         mvprintw(start_y + 1, start_x + 2, "%s (Score: ?)", title);
     } else {
         mvprintw(start_y + 1, start_x + 2, "%s (Score: %d)", title, score);
