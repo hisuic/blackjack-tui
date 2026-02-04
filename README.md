@@ -2,8 +2,7 @@
 
 [日本語版](./README.ja.md)
 
-![Image](https://github.com/user-attachments/assets/03ff4e9a-21ea-4e84-99c5-820ce0f89dce)
-
+![Image](https://github.com/user-attachments/assets/1448f699-e3ad-421f-8440-01aeed454c3e)
 
 Simple terminal Blackjack built with C and ncurses.
 

@@ -2,8 +2,7 @@
 
 [English](./README.md)
 
-![Image](https://github.com/user-attachments/assets/03ff4e9a-21ea-4e84-99c5-820ce0f89dce)
-
+![Image](https://github.com/user-attachments/assets/1448f699-e3ad-421f-8440-01aeed454c3e)
 
 C言語 + ncursesで作ったシンプルなターミナル版ブラックジャックです。
 
