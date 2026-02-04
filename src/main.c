@@ -130,6 +130,20 @@ void play_game(GameState *state) {
 
         while(!round_over) {
             render_game(state);
+
+            if (state->phase == PHASE_ROUND_OVER) {
+                int ch_end;
+                do {
+                    ch_end = get_input();
+                } while (ch_end != 'p' && ch_end != 'q');
+
+                if (ch_end == 'q') {
+                    running = false;
+                }
+                round_over = true;
+                continue;
+            }
+
             int ch = get_input();
 
             if (state->phase == PHASE_PLAYER_TURN) {
@@ -179,6 +193,7 @@ void play_game(GameState *state) {
                 }
 
                 if (state->player_score > 21) {
+                    strcpy(state->message, "You busted! Dealer wins.");
                     state->player_money -= state->current_bet;
                 } else if (state->dealer_score > 21) {
                     strcpy(state->message, "Dealer busts! You win!");
@@ -195,19 +210,6 @@ void play_game(GameState *state) {
                 
                 strcat(state->message, " (p) Play Again, (q) Quit");
                 state->phase = PHASE_ROUND_OVER;
-            }
-            if (state->phase == PHASE_ROUND_OVER) {
-                render_game(state);
-                
-                int ch_end;
-                do {
-                    ch_end = get_input();
-                } while (ch_end != 'p' && ch_end != 'q');
-                
-                if (ch_end == 'q') {
-                    running = false;
-                }
-                round_over = true;
             }
         }
     }
