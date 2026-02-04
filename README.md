@@ -67,3 +67,13 @@ make
 ## Notes for play
 - You cannot start a round with a $0 bet.
 - If your bankroll reaches $0, you get "Game Over" and can `r` to reset or `q` to quit.
+
+## Disclaimer
+This program is experimental and intended for educational purposes only.
+
+This software is provided "as is", without any warranty of any kind.
+The author shall not be held liable for any damage, data loss, system failure,
+security issues, or any other problems caused directly or indirectly by the use
+of this program.
+
+Use at your own risk.
