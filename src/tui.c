@@ -1,11 +1,12 @@
 #include "tui.h"
 #include <ncurses.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <string.h>
 
 static const char *SUITS[] = {"H", "D", "C", "S"};
 static const char *RANKS[] = {"?", "?", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
-static const char *TITLE_ART[6] = {
+static const char *TITLE_ART_FALLBACK[6] = {
     " ____  _            _     _            _    ",
     "| __ )| | __ _  ___| | __(_) __ _  ___| | __",
     "|  _ \\| |/ _` |/ __| |/ /| |/ _` |/ __| |/ /",
@@ -13,6 +14,31 @@ static const char *TITLE_ART[6] = {
     "|____/|_|\\__,_|\\___|_|\\_\\|_|\\__,_|\\___|_|\\_\\",
     "               T U I   D E M O              "
 };
+static char TITLE_ART[6][256];
+
+static void load_title_art_from_file(void) {
+    FILE *fp = fopen("src/asciiheader.txt", "r");
+    if (fp == NULL) {
+        fp = fopen("asciiheader.txt", "r");
+    }
+
+    if (fp == NULL) {
+        for (int i = 0; i < 6; ++i) {
+            snprintf(TITLE_ART[i], sizeof(TITLE_ART[i]), "%s", TITLE_ART_FALLBACK[i]);
+        }
+        return;
+    }
+
+    for (int i = 0; i < 6; ++i) {
+        if (fgets(TITLE_ART[i], sizeof(TITLE_ART[i]), fp) == NULL) {
+            snprintf(TITLE_ART[i], sizeof(TITLE_ART[i]), "%s", TITLE_ART_FALLBACK[i]);
+            continue;
+        }
+        TITLE_ART[i][strcspn(TITLE_ART[i], "\r\n")] = '\0';
+    }
+
+    fclose(fp);
+}
 
 void init_tui() {
     initscr();            // Start curses mode
@@ -24,6 +50,7 @@ void init_tui() {
     init_pair(1, COLOR_WHITE, COLOR_BLACK);
     init_pair(2, COLOR_RED, COLOR_BLACK);
     init_pair(3, COLOR_GREEN, COLOR_BLACK);
+    load_title_art_from_file();
 }
 
 void end_tui() {
