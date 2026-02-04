@@ -120,10 +120,11 @@ static void render_title_art(int cols) {
 }
 
 static void render_betting_controls(int start_y, int start_x, int width) {
-    draw_box(start_y, start_x, width, 5);
+    draw_box(start_y, start_x, width, 7);
     mvprintw(start_y + 1, start_x + 2, "Bet Amount");
-    mvprintw(start_y + 2, start_x + 2, "[1] +$10   [2] +$50   [3] +$100   [4] +$500   [c] Clear");
-    mvprintw(start_y + 3, start_x + 2, "Actions: [a] All In   [b] Deal   [q] Quit   [?] Help");
+    mvprintw(start_y + 2, start_x + 4, "[1] +$10   [2] +$50   [3] +$100   [4] +$500   [c] Clear");
+    mvprintw(start_y + 4, start_x + 2, "Actions");
+    mvprintw(start_y + 5, start_x + 4, "[a] All In   [b] Deal   [q] Quit   [?] Help");
 }
 
 static void render_turn_controls(int start_y, int start_x, int width) {
