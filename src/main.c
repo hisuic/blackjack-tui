@@ -179,6 +179,7 @@ void play_game(GameState *state) {
                 }
 
                 if (state->player_score > 21) {
+                    strcpy(state->message, "You busted! Dealer wins.");
                     state->player_money -= state->current_bet;
                 } else if (state->dealer_score > 21) {
                     strcpy(state->message, "Dealer busts! You win!");
