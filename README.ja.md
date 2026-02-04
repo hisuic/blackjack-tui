@@ -1,4 +1,4 @@
-# TUI Blackjack
+# Blackjack TUI
 
 [English](./README.md)
 

@@ -1,4 +1,4 @@
-# TUI Blackjack
+# Blackjack TUI
 
 [日本語版](./README.ja.md)
 
