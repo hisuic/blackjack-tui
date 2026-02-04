@@ -6,6 +6,16 @@
 
 static const char *SUITS[] = {"H", "D", "C", "S"};
 static const char *RANKS[] = {"?", "?", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
+enum ColorPairId {
+    CP_TEXT = 1,
+    CP_CARD_RED = 2,
+    CP_STATUS_SUCCESS = 3,
+    CP_STATUS_INFO = 4,
+    CP_TITLE = 5,
+    CP_PANEL_BORDER = 6,
+    CP_PANEL_HEADING = 7,
+    CP_STATUS_LOSS = 8
+};
 static const char *TITLE_ART_FALLBACK[6] = {
     " ____  _            _     _            _    ",
     "| __ )| | __ _  ___| | __(_) __ _  ___| | __",
@@ -47,10 +57,16 @@ void init_tui() {
     keypad(stdscr, TRUE); // Enable function keys
     curs_set(0);          // Hide the cursor
     start_color();        // Enable color
-    init_pair(1, COLOR_WHITE, COLOR_BLACK);
-    init_pair(2, COLOR_RED, COLOR_BLACK);
-    init_pair(3, COLOR_GREEN, COLOR_BLACK);
-    init_pair(4, COLOR_YELLOW, COLOR_BLACK);
+    use_default_colors();
+    init_pair(CP_TEXT, COLOR_WHITE, -1);
+    init_pair(CP_CARD_RED, COLOR_RED, -1);
+    init_pair(CP_STATUS_SUCCESS, COLOR_GREEN, -1);
+    init_pair(CP_STATUS_INFO, COLOR_YELLOW, -1);
+    init_pair(CP_TITLE, COLOR_CYAN, -1);
+    init_pair(CP_PANEL_BORDER, COLOR_BLUE, -1);
+    init_pair(CP_PANEL_HEADING, COLOR_MAGENTA, -1);
+    init_pair(CP_STATUS_LOSS, COLOR_RED, -1);
+    bkgd(COLOR_PAIR(CP_TEXT));
     load_title_art_from_file();
 }
 
@@ -76,8 +92,11 @@ static void draw_box(int start_y, int start_x, int width, int height) {
 }
 
 static void render_hand_box(int start_y, int start_x, int width, int height, const CardCollection *hand, int score, const char *title, bool hide_first_card) {
+    attron(COLOR_PAIR(CP_PANEL_BORDER));
     draw_box(start_y, start_x, width, height);
+    attroff(COLOR_PAIR(CP_PANEL_BORDER));
 
+    attron(COLOR_PAIR(CP_PANEL_HEADING) | A_BOLD);
     if (hand->count == 0) {
         mvprintw(start_y + 1, start_x + 2, "%s (Score: -)", title);
     } else if (hide_first_card) {
@@ -85,6 +104,7 @@ static void render_hand_box(int start_y, int start_x, int width, int height, con
     } else {
         mvprintw(start_y + 1, start_x + 2, "%s (Score: %d)", title, score);
     }
+    attroff(COLOR_PAIR(CP_PANEL_HEADING) | A_BOLD);
 
     int max_card_rows = height - 3; // title + cards + border
     int cards_to_draw = hand->count;
@@ -99,17 +119,18 @@ static void render_hand_box(int start_y, int start_x, int width, int height, con
             Card card = hand->cards[i];
             bool is_red = (card.suit == HEARTS || card.suit == DIAMONDS);
             if (is_red) {
-                attron(COLOR_PAIR(2));
+                attron(COLOR_PAIR(CP_CARD_RED));
             }
             mvprintw(start_y + 2 + i, start_x + 2, "[%s %s]", RANKS[card.rank], SUITS[card.suit]);
             if (is_red) {
-                attroff(COLOR_PAIR(2));
+                attroff(COLOR_PAIR(CP_CARD_RED));
             }
         }
     }
 }
 
 static void render_title_art(int cols) {
+    attron(COLOR_PAIR(CP_TITLE) | A_BOLD);
     for (int i = 0; i < 6; ++i) {
         int line_len = (int)strlen(TITLE_ART[i]);
         int title_x = (cols - line_len) / 2;
@@ -118,37 +139,46 @@ static void render_title_art(int cols) {
         }
         mvprintw(1 + i, title_x, "%s", TITLE_ART[i]);
     }
+    attroff(COLOR_PAIR(CP_TITLE) | A_BOLD);
 }
 
 static void render_betting_controls(int start_y, int start_x, int width) {
+    attron(COLOR_PAIR(CP_PANEL_BORDER));
     draw_box(start_y, start_x, width, 7);
+    attroff(COLOR_PAIR(CP_PANEL_BORDER));
+    attron(COLOR_PAIR(CP_PANEL_HEADING) | A_BOLD);
     mvprintw(start_y + 1, start_x + 2, "Bet Amount");
-    mvprintw(start_y + 2, start_x + 4, "[1] +$10   [2] +$50   [3] +$100   [4] +$500   [c] Clear");
     mvprintw(start_y + 4, start_x + 2, "Actions");
+    attroff(COLOR_PAIR(CP_PANEL_HEADING) | A_BOLD);
+    mvprintw(start_y + 2, start_x + 4, "[1] +$10   [2] +$50   [3] +$100   [4] +$500   [c] Clear");
     mvprintw(start_y + 5, start_x + 4, "[a] All In   [b] Deal   [q] Quit   [?] Help");
 }
 
 static void render_turn_controls(int start_y, int start_x, int width) {
+    attron(COLOR_PAIR(CP_PANEL_BORDER));
     draw_box(start_y, start_x, width, 3);
+    attroff(COLOR_PAIR(CP_PANEL_BORDER));
     mvprintw(start_y + 1, start_x + 2, "[h] Hit   [s] Stand   [d] Double   [q] Quit   [?] Help");
 }
 
 static int status_color_for_message(const char *message) {
     if (strstr(message, "Dealer busts") != NULL) {
-        return 3;
+        return CP_STATUS_SUCCESS;
     }
     if (strstr(message, "bust") != NULL || strstr(message, "busted") != NULL ||
         strstr(message, "Dealer wins") != NULL || strstr(message, "Game Over") != NULL) {
-        return 2;
+        return CP_STATUS_LOSS;
     }
     if (strstr(message, "win") != NULL || strstr(message, "Blackjack") != NULL || strstr(message, "push") != NULL) {
-        return 3;
+        return CP_STATUS_SUCCESS;
     }
-    return 4;
+    return CP_STATUS_INFO;
 }
 
 static void render_status_message(int start_y, int start_x, int width, const char *message) {
+    attron(COLOR_PAIR(CP_PANEL_BORDER));
     draw_box(start_y, start_x, width, 3);
+    attroff(COLOR_PAIR(CP_PANEL_BORDER));
     int color_pair = status_color_for_message(message);
     attron(COLOR_PAIR(color_pair) | A_BOLD);
     mvprintw(start_y + 1, start_x + 2, "%s", message);
@@ -196,8 +226,10 @@ void render_game(const GameState *state) {
     render_hand_box(hand_y, dealer_x, column_width, hand_box_height, &state->dealer_hand, state->dealer_score, "Dealer", hide_dealer_card);
 
     // Render money and bet
+    attron(COLOR_PAIR(CP_PANEL_HEADING) | A_BOLD);
     mvprintw(status_y, player_x, "Money: $%d", state->player_money);
     mvprintw(status_y, dealer_x, "Bet: $%d", state->current_bet);
+    attroff(COLOR_PAIR(CP_PANEL_HEADING) | A_BOLD);
 
     // Render message
     render_status_message(message_y, controls_x, controls_width, state->message);
