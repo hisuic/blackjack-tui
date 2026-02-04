@@ -44,27 +44,57 @@ static void render_hand(int start_y, int start_x, const CardCollection *hand, in
     }
 }
 
+static int max_int(int a, int b) {
+    return (a > b) ? a : b;
+}
+
 void render_game(const GameState *state) {
     clear();
 
     bool hide_dealer_card = (state->phase == PHASE_PLAYER_TURN);
+    int cols;
+    int screen_rows;
+    getmaxyx(stdscr, screen_rows, cols);
+    (void)screen_rows;
+
+    int side_margin = 2;
+    int column_gap = 4;
+    int usable_width = cols - (side_margin * 2) - column_gap;
+    int column_width = usable_width / 2;
+    if (column_width < 18) {
+        column_width = 18;
+    }
+
+    int total_width = (column_width * 2) + column_gap;
+    int start_x = (cols - total_width) / 2;
+    if (start_x < 1) {
+        start_x = 1;
+    }
+
+    int hand_y = 2;
+    int player_x = start_x;
+    int dealer_x = start_x + column_width + column_gap;
+    int hand_height = max_int(state->player_hand.count, state->dealer_hand.count) + 2;
+    int status_y = hand_y + hand_height + 1;
+    int message_y = status_y + 2;
+    int controls_y = message_y + 2;
 
     // Render hands
-    render_hand(2, 2, &state->player_hand, state->player_score, "Player", false);
-    render_hand(2, 30, &state->dealer_hand, state->dealer_score, "Dealer", hide_dealer_card);
+    render_hand(hand_y, player_x, &state->player_hand, state->player_score, "Player", false);
+    render_hand(hand_y, dealer_x, &state->dealer_hand, state->dealer_score, "Dealer", hide_dealer_card);
 
     // Render money and bet
-    mvprintw(13, 2, "Money: $%d", state->player_money);
-    mvprintw(13, 30, "Bet: $%d", state->current_bet);
+    mvprintw(status_y, player_x, "Money: $%d", state->player_money);
+    mvprintw(status_y, dealer_x, "Bet: $%d", state->current_bet);
 
     // Render message
-    mvprintw(15, 2, "%s", state->message);
+    mvprintw(message_y, player_x, "%s", state->message);
 
     // Render instructions
     if (state->phase == PHASE_BETTING) {
-        mvprintw(17, 2, "1: $10 | 2: $50 | 3: $100 | 4: $500      (c) Clear | (a) All In | (b) Deal");
+        mvprintw(controls_y, player_x, "1: $10 | 2: $50 | 3: $100 | 4: $500 | (c) Clear | (a) All In | (b) Deal");
     } else {
-        mvprintw(17, 2, "(h) Hit  (s) Stand  (d) Double  (q) Quit  (?) Help");
+        mvprintw(controls_y, player_x, "(h) Hit  (s) Stand  (d) Double  (q) Quit  (?) Help");
     }
 
     refresh();
