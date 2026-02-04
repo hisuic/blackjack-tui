@@ -1,9 +1,18 @@
 #include "tui.h"
 #include <ncurses.h>
 #include <stdbool.h>
+#include <string.h>
 
 static const char *SUITS[] = {"H", "D", "C", "S"};
 static const char *RANKS[] = {"?", "?", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
+static const char *TITLE_ART[6] = {
+    " ____  _            _     _            _    ",
+    "| __ )| | __ _  ___| | __(_) __ _  ___| | __",
+    "|  _ \\| |/ _` |/ __| |/ /| |/ _` |/ __| |/ /",
+    "| |_) | | (_| | (__|   < | | (_| | (__|   < ",
+    "|____/|_|\\__,_|\\___|_|\\_\\|_|\\__,_|\\___|_|\\_\\",
+    "               T U I   D E M O              "
+};
 
 void init_tui() {
     initscr();            // Start curses mode
@@ -70,6 +79,17 @@ static void render_hand_box(int start_y, int start_x, int width, int height, con
     }
 }
 
+static void render_title_art(int cols) {
+    for (int i = 0; i < 6; ++i) {
+        int line_len = (int)strlen(TITLE_ART[i]);
+        int title_x = (cols - line_len) / 2;
+        if (title_x < 1) {
+            title_x = 1;
+        }
+        mvprintw(1 + i, title_x, "%s", TITLE_ART[i]);
+    }
+}
+
 void render_game(const GameState *state) {
     clear();
 
@@ -93,7 +113,10 @@ void render_game(const GameState *state) {
         start_x = 1;
     }
 
-    int hand_y = 2;
+    render_title_art(cols);
+
+    int title_height = 6;
+    int hand_y = 1 + title_height + 1;
     int player_x = start_x;
     int dealer_x = start_x + column_width + column_gap;
     int hand_box_height = 13; // top/bottom border + title + 10 card rows
