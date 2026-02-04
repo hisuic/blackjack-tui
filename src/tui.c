@@ -92,7 +92,8 @@ void render_game(const GameState *state) {
 
     // Render instructions
     if (state->phase == PHASE_BETTING) {
-        mvprintw(controls_y, player_x, "1: $10 | 2: $50 | 3: $100 | 4: $500 | (c) Clear | (a) All In | (b) Deal");
+        mvprintw(controls_y, player_x, "Bet Amount: 1:$10  2:$50  3:$100  4:$500");
+        mvprintw(controls_y + 1, player_x, "Actions: (c) Clear  (a) All In  (b) Deal  (q) Quit  (?) Help");
     } else {
         mvprintw(controls_y, player_x, "(h) Hit  (s) Stand  (d) Double  (q) Quit  (?) Help");
     }
