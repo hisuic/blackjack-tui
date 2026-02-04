@@ -50,6 +50,7 @@ void init_tui() {
     init_pair(1, COLOR_WHITE, COLOR_BLACK);
     init_pair(2, COLOR_RED, COLOR_BLACK);
     init_pair(3, COLOR_GREEN, COLOR_BLACK);
+    init_pair(4, COLOR_YELLOW, COLOR_BLACK);
     load_title_art_from_file();
 }
 
@@ -132,6 +133,24 @@ static void render_turn_controls(int start_y, int start_x, int width) {
     mvprintw(start_y + 1, start_x + 2, "[h] Hit   [s] Stand   [d] Double   [q] Quit   [?] Help");
 }
 
+static int status_color_for_message(const char *message) {
+    if (strstr(message, "win") != NULL || strstr(message, "Blackjack") != NULL || strstr(message, "push") != NULL) {
+        return 3;
+    }
+    if (strstr(message, "bust") != NULL || strstr(message, "Dealer wins") != NULL || strstr(message, "Game Over") != NULL) {
+        return 2;
+    }
+    return 4;
+}
+
+static void render_status_message(int start_y, int start_x, int width, const char *message) {
+    draw_box(start_y, start_x, width, 3);
+    int color_pair = status_color_for_message(message);
+    attron(COLOR_PAIR(color_pair) | A_BOLD);
+    mvprintw(start_y + 1, start_x + 2, "%s", message);
+    attroff(COLOR_PAIR(color_pair) | A_BOLD);
+}
+
 void render_game(const GameState *state) {
     clear();
 
@@ -164,7 +183,7 @@ void render_game(const GameState *state) {
     int hand_box_height = 13; // top/bottom border + title + 10 card rows
     int status_y = hand_y + hand_box_height + 1;
     int message_y = status_y + 2;
-    int controls_y = message_y + 2;
+    int controls_y = message_y + 4;
     int controls_x = start_x;
     int controls_width = total_width;
 
@@ -177,7 +196,7 @@ void render_game(const GameState *state) {
     mvprintw(status_y, dealer_x, "Bet: $%d", state->current_bet);
 
     // Render message
-    mvprintw(message_y, player_x, "%s", state->message);
+    render_status_message(message_y, controls_x, controls_width, state->message);
 
     // Render instructions
     if (state->phase == PHASE_BETTING) {
