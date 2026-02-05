@@ -1,7 +1,6 @@
 #include "tui.h"
 #include <ncurses.h>
 #include <stdbool.h>
-#include <stdio.h>
 #include <string.h>
 
 static const char *SUITS[] = {"H", "D", "C", "S"};
@@ -16,39 +15,14 @@ enum ColorPairId {
     CP_PANEL_HEADING = 7,
     CP_STATUS_LOSS = 8
 };
-static const char *TITLE_ART_FALLBACK[6] = {
-    " ____  _            _     _            _    ",
-    "| __ )| | __ _  ___| | __(_) __ _  ___| | __",
-    "|  _ \\| |/ _` |/ __| |/ /| |/ _` |/ __| |/ /",
-    "| |_) | | (_| | (__|   < | | (_| | (__|   < ",
-    "|____/|_|\\__,_|\\___|_|\\_\\|_|\\__,_|\\___|_|\\_\\",
-    "               T U I   D E M O              "
+static const char *TITLE_ART[6] = {
+    "__________.__                 __        ____.              __     _______________ ___.___ ",
+    "\\______   \\  | _____    ____ |  | __   |    |____    ____ |  | __ \\__    ___/    |   \\   |",
+    " |    |  _/  | \\__  \\ _/ ___\\|  |/ /   |    \\__  \\ _/ ___\\|  |/ /   |    |  |    |   /   |",
+    " |    |   \\  |__/ __ \\\\  \\___|    </\\__|    |/ __ \\\\  \\___|    <    |    |  |    |  /|   |",
+    " |______  /____(____  /\\___  >__|_ \\________(____  /\\___  >__|_ \\   |____|  |______/ |___|",
+    "        \\/          \\/     \\/     \\/             \\/     \\/     \\/                         "
 };
-static char TITLE_ART[6][256];
-
-static void load_title_art_from_file(void) {
-    FILE *fp = fopen("src/asciiheader.txt", "r");
-    if (fp == NULL) {
-        fp = fopen("asciiheader.txt", "r");
-    }
-
-    if (fp == NULL) {
-        for (int i = 0; i < 6; ++i) {
-            snprintf(TITLE_ART[i], sizeof(TITLE_ART[i]), "%s", TITLE_ART_FALLBACK[i]);
-        }
-        return;
-    }
-
-    for (int i = 0; i < 6; ++i) {
-        if (fgets(TITLE_ART[i], sizeof(TITLE_ART[i]), fp) == NULL) {
-            snprintf(TITLE_ART[i], sizeof(TITLE_ART[i]), "%s", TITLE_ART_FALLBACK[i]);
-            continue;
-        }
-        TITLE_ART[i][strcspn(TITLE_ART[i], "\r\n")] = '\0';
-    }
-
-    fclose(fp);
-}
 
 void init_tui() {
     initscr();            // Start curses mode
@@ -67,7 +41,6 @@ void init_tui() {
     init_pair(CP_PANEL_HEADING, COLOR_MAGENTA, -1);
     init_pair(CP_STATUS_LOSS, COLOR_RED, -1);
     bkgd(COLOR_PAIR(CP_TEXT));
-    load_title_art_from_file();
 }
 
 void end_tui() {
