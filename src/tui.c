@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-static const char *SUITS[] = {"H", "D", "C", "S"};
+static const char *SUITS[] = {"Hearts", "Diamonds", "Clubs", "Spades"};
 static const char *RANKS[] = {"?", "?", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
 enum ColorPairId {
     CP_TEXT = 1,
